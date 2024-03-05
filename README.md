@@ -2,7 +2,7 @@
 
 ### Overview
 
-This documentation provides an overview of the Grocery Store system, which is implemented in TypeScript using the Azle framework. The system allows users to manage grocery store, including adding, updating, and deleting product; make a transaction; adding, updating, and deleting Customer, adding and deleting Coupon.
+This documentation provides an overview of the Grocery Store system, which is implemented in TypeScript using the Azle framework. The system allows users to manage grocery store, including adding, updating, and deleting product; make a transaction; adding, updating, and deleting Customer; adding and deleting Coupon.
 
 ### Additional Notes
 

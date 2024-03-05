@@ -50,7 +50,6 @@ type Product = typeof Product.tsType;
 const Transaction = Record({
     id : text, 
     finalPrice : float64 , 
-    complete : bool, 
     couponId : Opt(text),
 });
 
@@ -190,7 +189,11 @@ export default Canister({
             return Result.Ok(productsStorage.get(id).Some!);
     }),
 
-    // Function to get all product
+    /**
+    * get Product by id
+    * @param id - id of the Product
+    * @returns Vector of all Product
+    */
     getAllProduct: query([], Result(Vec(Product), text), () => {
     try {
         return Result.Ok(productsStorage.values());
@@ -283,7 +286,6 @@ export default Canister({
             const transaction : Transaction= {
                 id : uniqueTransaction, 
                 finalPrice : finalPrice,
-                complete : false,
                 couponId : couponId? couponId : None,
             }     
             transactionStorage.insert(uniqueTransaction, transaction);
@@ -292,7 +294,29 @@ export default Canister({
             return Result.Ok(transaction);
     }),
 
-    // Function to get all transactions
+    /**
+    * get Transaction by id
+    * @param id - id of the Transaction
+    * @returns Transaction with id = parameter or an error
+    */
+    getTransactionById: query(
+        [text], Result(Transaction, text), 
+        (id) => {
+            if (!id){
+                return Result.Err("Transaction Id is missing!")
+            }
+            if (!transactionExist(id)){
+                return Result.Err(`Transaction with id ${id} not found`);
+            } 
+
+            return Result.Ok(transactionStorage.get(id).Some!);
+    }),
+
+    /**
+    * get Transaction by id
+    * @param id - id of the Transaction
+    * @returns Vector of all transaction
+    */
     getAllTransaction: query([], Result(Vec(Transaction), text), () => {
     try {
         return Result.Ok(transactionStorage.values());
@@ -369,7 +393,11 @@ export default Canister({
         }
     ),
 
-    // Function to get all customer
+    /**
+    * get customer by id
+    * @param id - id of the customer
+    * @returns Vector of all customer
+    */
     getAllCustomer: query([], Result(Vec(Customer), text), () => {
         try {
             return Result.Ok(customersStorage.values());
@@ -504,7 +532,11 @@ export default Canister({
         }
     ),
 
-    // Function to get all coupon
+    /**
+    * get Coupon by id
+    * @param id - id of the Coupon
+    * @returns Vector of all Coupon
+    */
     getAllCoupon: query([], Result(Vec(Coupon), text), () => {
         try {
             return Result.Ok(couponsStorage.values());
@@ -540,6 +572,15 @@ const couponExist = (couponId: text): boolean => {
  */
 const customerExist = (customer: text): boolean => {
     return customersStorage.containsKey(customer);
+};
+
+/**
+* Checks if the transaction exists
+ * @param transaction - transaction identifier
+ * @returns True if the transaction exists, false otherwise
+ */
+const transactionExist = (transaction: text): boolean => {
+    return transactionStorage.containsKey(transaction);
 };
 
 // Mocking the 'crypto' object for testing purposes
