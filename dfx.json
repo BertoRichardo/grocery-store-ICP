@@ -1,0 +1,12 @@
+{
+    "canisters": {
+        "grocery-store-ICP": {
+            "type": "custom",
+            "main": "src/index.ts",
+            "candid": "src/index.did",
+            "build": "npx azle grocery-store-ICP",
+            "wasm": ".azle/grocery-store-ICP/grocery-store-ICP.wasm",
+            "gzip": true
+        }
+    }
+}

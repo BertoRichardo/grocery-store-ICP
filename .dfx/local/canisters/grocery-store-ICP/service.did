@@ -1,0 +1,133 @@
+service : {
+  addCoupon : (text, int8, int32) -> (
+      variant {
+        Ok : record {
+          maxDiscount : int32;
+          couponId : text;
+          customerId : text;
+          discountPercentage : int8;
+        };
+        Err : text;
+      },
+    );
+  addCustomer : (text) -> (
+      variant {
+        Ok : record {
+          id : text;
+          balance : float64;
+          name : text;
+          totalBuy : float64;
+        };
+        Err : text;
+      },
+    );
+  addProduct : (text, int32, float64) -> (
+      variant {
+        Ok : record { id : text; name : text; stock : int32; price : float64 };
+        Err : text;
+      },
+    );
+  createTransaction : (text, int32, opt text, text) -> (
+      variant {
+        Ok : record {
+          id : text;
+          finalPrice : float64;
+          complete : bool;
+          couponId : opt text;
+        };
+        Err : text;
+      },
+    );
+  customerTopUp : (text, float64) -> (
+      variant {
+        Ok : record {
+          id : text;
+          balance : float64;
+          name : text;
+          totalBuy : float64;
+        };
+        Err : text;
+      },
+    );
+  deleteCoupon : (text) -> (variant { Ok : text; Err : text });
+  deleteCustomer : (text) -> (variant { Ok : text; Err : text });
+  deleteProduct : (text) -> (variant { Ok : text; Err : text });
+  getAll : () -> (
+      variant {
+        Ok : vec record {
+          maxDiscount : int32;
+          couponId : text;
+          customerId : text;
+          discountPercentage : int8;
+        };
+        Err : text;
+      },
+    ) query;
+  getAllCustomer : () -> (
+      variant {
+        Ok : vec record {
+          id : text;
+          balance : float64;
+          name : text;
+          totalBuy : float64;
+        };
+        Err : text;
+      },
+    ) query;
+  getAllProduct : () -> (
+      variant {
+        Ok : vec record {
+          id : text;
+          name : text;
+          stock : int32;
+          price : float64;
+        };
+        Err : text;
+      },
+    ) query;
+  getAllTransaction : () -> (
+      variant {
+        Ok : vec record {
+          id : text;
+          finalPrice : float64;
+          complete : bool;
+          couponId : opt text;
+        };
+        Err : text;
+      },
+    ) query;
+  getCoupon : (text) -> (
+      variant {
+        Ok : record {
+          maxDiscount : int32;
+          couponId : text;
+          customerId : text;
+          discountPercentage : int8;
+        };
+        Err : text;
+      },
+    ) query;
+  getCustomer : (text) -> (
+      variant {
+        Ok : record {
+          id : text;
+          balance : float64;
+          name : text;
+          totalBuy : float64;
+        };
+        Err : text;
+      },
+    ) query;
+  getProductById : (text) -> (
+      variant {
+        Ok : record { id : text; name : text; stock : int32; price : float64 };
+        Err : text;
+      },
+    ) query;
+  updateProduct : (text, text, int32, float64) -> (
+      variant {
+        Ok : record { id : text; name : text; stock : int32; price : float64 };
+        Err : text;
+      },
+    );
+}
