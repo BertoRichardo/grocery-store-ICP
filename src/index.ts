@@ -1,27 +1,17 @@
 import {
-    blob,
     Canister,
-    ic,
-    Err,
-    nat64,
     int32,
-    Ok,
-    Some,
     Opt,
-    Principal,
     query,
     Record,
     Result,
     StableBTreeMap,
     text,
     update,
-    Variant,
     Vec,
-    bool,
     int8,
     float64,
     None,
-    AzleFloat64,
 }  from 'azle';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -196,7 +186,6 @@ export default Canister({
     */
     getAllProduct: query([], Result(Vec(Product), text), () => {
     try {
-        console.log("prudcut")
         return Result.Ok(productsStorage.values());
     } catch (error) {
         return Result.Err('Failed to get product');
@@ -213,7 +202,6 @@ export default Canister({
         [text, int32, Opt(text), text  ], Result(Transaction, text),
         (productId, buyQuantity, uniqueCouponId = None, customerId) => {
             // Validate mandatory parameters
-            console.log("sebelum if 1")
             if (!productId || !buyQuantity || !customerId) {
                 return Result.Err(`Missing productId or buyQuantity param`)
             }
@@ -242,66 +230,50 @@ export default Canister({
             let price = product.price * buyQuantity
             let originalPrice = price
             let finalPrice ; 
-            console.log("sebelum if 2")
             // give discount if there is uniqueCouponId on the param
             if (uniqueCouponId.Some!){
                 // validate uniqueCouponId
                 if (!couponExist(uniqueCouponId.Some!)){
-                    console.log("if 1")
                     return Result.Err(`Coupon with id ${uniqueCouponId} not found`)
                 }
 
-                console.log("if 2")
                 const coupon = couponsStorage.get(uniqueCouponId.Some!).Some!
                 
-                console.log("if 3")
                 
-                console.log("if 4")
                 if ((coupon.customerId) != customerId) {
-                    console.log("if 5")
                     return Result.Err(`Member is not the owner of the coupon`)
                 } 
                 else {
-                    console.log("if 6")
                     finalPrice =  Math.max ((((100 - coupon.discountPercentage) * price) / 100), (price - coupon.maxDiscount))
                 }
             } else {
-                console.log("if 7")
                 finalPrice = originalPrice;
             }
             
-            console.log("setelha if 1")
             // validate customer balance
             const currBalance = customer.balance
             if (finalPrice > currBalance){
-                console.log("setelha if 2")
                 return Result.Err("Customer balance is insufficient")
             }
             
-            console.log("setelha if 3")
             // Remove the used uniqueCouponId
-            if (uniqueCouponId.Some!){
-                console.log("setelha if 4")
+            if (uniqueCouponId.Some){
                 couponsStorage.remove(uniqueCouponId.Some!)
             }
             
             // update the product and customer 
-            console.log("setelha if 5")
             const updatedProduct : Product = {
                 ...product, 
                 stock : product.stock - buyQuantity}
             productsStorage.insert(productId ,updatedProduct)
 
-            console.log("setelha if 6")
             const updatedCustomer : Customer = {
                 ...customer,
                 balance : currBalance - finalPrice,
                 totalBuy : customer.totalBuy + finalPrice,
             }
-            console.log("setelha if 7")
             customersStorage.insert(customerId, updatedCustomer);
             
-            console.log("setelha if 8")
             // insert the transaction 
             const uniqueTransaction = uuidv4();
             const transaction : Transaction= {
@@ -309,10 +281,8 @@ export default Canister({
                 finalPrice : finalPrice,
                 couponId : None,
             }     
-            console.log("setelha if 9")
             transactionStorage.insert(uniqueTransaction, transaction);
             
-            console.log("setelha if 10")
             // return 
             return Result.Ok(transaction);
     }),
@@ -342,7 +312,6 @@ export default Canister({
     */
     getAllTransaction: query([], Result(Vec(Transaction), text), () => {
     try {
-        console.log("transaction")
         return Result.Ok(transactionStorage.values());
     } catch (error) {
         return Result.Err('Failed to get transactions');
@@ -424,7 +393,6 @@ export default Canister({
     */
     getAllCustomer: query([], Result(Vec(Customer), text), () => {
         try {
-            console.log("customer")
             return Result.Ok(customersStorage.values());
         } catch (error) {
             return Result.Err('Failed to get customer');
@@ -566,7 +534,6 @@ export default Canister({
     */
     getAllCoupon: query([], Result(Vec(Coupon), text), () => {
         try {
-            console.log("coupon")
             return Result.Ok(couponsStorage.values());
         } catch (error) {
             return Result.Err('Failed to get coupon');
